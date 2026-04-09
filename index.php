@@ -214,7 +214,7 @@ $tutorList = $engine->getMatchedTutors($userPref);
     <div class="bottom-nav">
         <a href="index.php" class="nav-item"><i class="fa-solid fa-home"></i></a>
         <a href="preference.php" class="nav-item active"><i class="fa-solid fa-search"></i></a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-book-open"></i></a>
+        <a href="my_classes.php" class="nav-item"><i class="fa-solid fa-book-open"></i></a>
         <a href="#" class="nav-item"><i class="fa-solid fa-user"></i></a>
     </div>
 </div>
