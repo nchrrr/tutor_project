@@ -1,3 +1,31 @@
+<?php 
+session_start();
+
+// 1. ตรวจสอบการกดปุ่มเข้าสู่ระบบ
+if (isset($_POST['login_user'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // ตรวจสอบว่ากรอกข้อมูลครบหรือไม่
+    if (!empty($email) && !empty($password)) {
+        // บันทึก Session พื้นฐาน
+        $_SESSION['email'] = $email;
+        $_SESSION['success'] = "เข้าสู่ระบบสำเร็จ";
+
+        /* แก้ไขจาก matching.php เป็น preference.php
+           ใช้ JavaScript ในการเปลี่ยนหน้าเพื่อความแน่นอน 
+        */
+        echo "<script>
+            alert('เข้าสู่ระบบสำเร็จ!');
+            window.location.href = 'preference.php';
+        </script>";
+        exit(); 
+    } else {
+        echo "<script>alert('กรุณากรอกอีเมลและรหัสผ่านให้ครบถ้วน');</script>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -10,95 +38,50 @@
         :root {
             --orange-grad: linear-gradient(180deg, #FF6B6B 0%, #FEB47B 100%);
             --soft-red: #FF6B6B;
+            --bg-gray: #F9F9F9;
         }
-
         * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
         body { margin: 0; background-color: #333; display: flex; justify-content: center; min-height: 100vh; }
 
         .mobile-container {
             width: 100%; max-width: 414px; min-height: 100vh;
-            background-color: #F9F9F9; position: relative;
-            display: flex; flex-direction: column; overflow: hidden;
+            background-color: var(--bg-gray); position: relative;
+            display: flex; flex-direction: column;
         }
 
-        /* Header สีส้มมนๆ บังส่วนขาวตาม UI ใหม่ */
         .header-orange {
-            background: var(--orange-grad);
-            height: 250px;
-            border-radius: 0 0 50px 50px;
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center;
-            color: white; 
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            z-index: 2;
+            background: var(--orange-grad); height: 200px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; position: relative;
         }
+        .back-link { position: absolute; left: 20px; top: 25px; color: white; font-size: 22px; }
+        .header-title { font-size: 24px; font-weight: 500; margin-top: 15px; }
 
-        .back-btn { 
-            position: absolute; left: 20px; top: 40px; color: white; 
-            font-size: 22px; text-decoration: none; 
+        .login-body { padding: 40px 30px; flex: 1; }
+        .input-group { margin-bottom: 25px; }
+        .label { display: block; font-size: 14px; color: #888; margin-bottom: 10px; }
+        .input {
+            width: 100%; padding: 16px; border-radius: 12px;
+            border: 1px solid #ddd; background: white; font-size: 14px; outline: none;
         }
+        .input:focus { border-color: var(--soft-red); }
 
-        .header-title { 
-            font-size: 26px; font-weight: 500;
-            margin-top: 20px;
-        }
+        .forgot { text-align: right; margin-top: -15px; margin-bottom: 35px; }
+        .forgot a { font-size: 12px; color: var(--soft-red); text-decoration: none; }
 
-        /* ส่วนเนื้อหา */
-        .content {
-            flex: 1;
-            padding: 40px 30px;
-            width: 100%;
-            background-color: #F9F9F9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .login-form { width: 100%; margin-top: 10px; }
-        
-        .input-label {
-            display: block; margin-bottom: 8px; font-size: 15px;
-            color: #555; font-weight: 400;
-        }
-
-        .input-group { margin-bottom: 20px; }
-
-        .input-field {
-            width: 100%;
-            padding: 15px 20px;
-            border-radius: 12px;
-            border: 1px solid #E0E0E0;
-            background-color: white;
-            font-size: 15px;
-        }
-
-        .forgot-link {
-            display: block; text-align: right; margin-top: -10px;
-            color: #FF8585; text-decoration: none; font-size: 14px;
-        }
-
-        /* ปุ่มเข้าสู่ระบบ */
         .btn-login {
-            width: 100%;
-            background-color: #FF6B6B;
-            color: white; border: none;
-            padding: 16px; border-radius: 12px;
-            font-size: 20px; font-weight: 500;
-            margin-top: 30px; cursor: pointer;
-            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+            width: 100%; background: var(--soft-red); color: white;
+            border: none; border-radius: 12px; padding: 16px;
+            font-size: 18px; font-weight: 500; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3); margin-bottom: 20px;
         }
 
-        .register-text {
-            margin-top: 20px; font-size: 14px; color: #888; text-align: center;
-        }
-        .register-text a { color: #FF8585; text-decoration: none; font-weight: 500; }
+        .reg-text { text-align: center; font-size: 14px; color: #888; margin-bottom: 30px; }
+        .reg-text b { color: var(--soft-red); cursor: pointer; }
 
-        #error-msg {
-            color: #FF6B6B; font-size: 13px; text-align: center;
-            margin-top: 10px; display: none;
+        .footer-back {
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; color: #bbb; text-decoration: none; font-size: 15px;
         }
     </style>
 </head>
@@ -106,52 +89,32 @@
 
 <div class="mobile-container">
     <div class="header-orange">
-        <a href="javascript:history.back()" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <a href="#" class="back-link"><i class="fa-solid fa-arrow-left"></i></a>
         <div class="header-title">เข้าสู่ระบบ</div>
     </div>
 
-    <div class="content">
-        <form class="login-form" id="loginForm">
+    <div class="login-body">
+        <form method="POST" action="login.php">
             <div class="input-group">
-                <label class="input-label">อีเมล</label>
-                <input type="email" id="email" class="input-field" placeholder="กรอกอีเมลของคุณ" required>
+                <label class="label">อีเมล</label>
+                <input type="email" name="email" class="input" placeholder="กรอกอีเมลของคุณ" required>
             </div>
-            
+
             <div class="input-group">
-                <label class="input-label">รหัสผ่าน</label>
-                <input type="password" id="password" class="input-field" placeholder="........" required>
+                <label class="label">รหัสผ่าน</label>
+                <input type="password" name="password" class="input" placeholder="........" required>
             </div>
 
-            <a href="#" class="forgot-link">ลืมรหัสผ่าน?</a>
+            <div class="forgot"><a href="#">ลืมรหัสผ่าน?</a></div>
 
-            <div id="error-msg">อีเมลหรือรหัสผ่านไม่ถูกต้อง!</div>
+            <button type="submit" name="login_user" class="btn-login">เข้าสู่ระบบ</button>
 
-            <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
-            
-            <div class="register-text">
-                ยังไม่มีบัญชี? <a href="#">สมัครสมาชิก</a>
-            </div>
+            <div class="reg-text">ยังไม่มีบัญชี? <b onclick="location.href='register.php'">สมัครสมาชิก</b></div>
+
+            <a href="#" class="footer-back"><i class="fa-solid fa-arrow-left"></i> กลับ</a>
         </form>
     </div>
 </div>
-
-<script>
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-    const errorMsg = document.getElementById('error-msg');
-
-    // ตรวจสอบ Login ตามที่กำหนด
-    if (email === 'user@gmail.com' && pass === '1234') {
-        window.location.href = 'matching.php';
-    } else if (email === 'admin@gmail.com' && pass === '4321') {
-        window.location.href = 'admin_dashboard.php';
-    } else {
-        errorMsg.style.display = 'block';
-    }
-});
-</script>
 
 </body>
 </html>
