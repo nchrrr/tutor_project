@@ -127,6 +127,7 @@ $user = new Student();
         <a href="edit_preference.php" class="nav-link"><i class="fa-solid fa-sliders"></i></a>
         <a href="#" class="nav-link"><i class="fa-solid fa-comment-dots"></i></a>
         <a href="student_profile.php" class="nav-link active"><i class="fa-solid fa-user"></i></a>
+        <a href="my_classes.php" class="nav-link"><i class="fa-solid fa-book-open"></i></a>
     </div>
 </div>
 
