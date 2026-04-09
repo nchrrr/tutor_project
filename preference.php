@@ -125,7 +125,7 @@
     <div class="nav-bar">
         <i class="fa-solid fa-home"></i>
         <i class="fa-solid fa-search active"></i>
-        <i class="fa-solid fa-book-open"></i>
+       <a href="my_classes.php"><i class="fa-solid fa-book-open"></i></a>
         <i class="fa-solid fa-user"></i>
     </div>
 </div>
