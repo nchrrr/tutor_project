@@ -1,52 +1,43 @@
 <?php
-require_once 'MatchEngine.class.php';
+session_start();
 
-// 1. ข้อมูลติวเตอร์จำลอง (Mock Data) อ้างอิงจากลักษณะใน UI
-$tutorsRaw = [
-    [
-        "id" => 1,
-        "name" => "Tutor Somchai",
-        "rating" => 4.9,
-        "subjects" => "ฟิสิกส์, เคมี",
-        "type" => "Visual",
-        "price" => 200,
-        "tags" => ["ใจดี", "สอนสนุก", "เน้นเนื้อหา"]
-    ],
-    [
-        "id" => 2,
-        "name" => "Tutor Somsak",
-        "rating" => 4.9,
-        "subjects" => "เคมี, ชีวะ",
-        "type" => "Lecture",
-        "price" => 180,
-        "tags" => ["เน้นโจทย์", "เนื้อหาแน่น", "ใจเย็น"]
-    ],
-    [
-        "id" => 3,
-        "name" => "Tutor Somying",
-        "rating" => 4.8,
-        "subjects" => "อังกฤษ, TOEIC",
-        "type" => "Visual",
-        "price" => 150,
-        "tags" => ["สอนสนุก", "สำเนียงดี", "ใจดี"]
-    ],
-    [
-        "id" => 4,
-        "name" => "Tutor Alice",
-        "rating" => 4.7,
-        "subjects" => "แคลคูลัส, Stat",
-        "type" => "Lecture",
-        "price" => 150,
-        "tags" => ["เนื้อหาแน่น", "ใจเย็น", "เน้นโจทย์"]
-    ]
+/**
+ * OOP SECTION: คลาสสำหรับจัดการข้อมูลคลาสเรียนของผู้ใช้งาน
+ */
+class StudentCourse {
+    public $id, $subject, $tutorName, $progress, $totalSessions, $nextSchedule, $status, $color;
+
+    public function __construct($id, $subject, $tutor, $current, $total, $schedule, $status, $color) {
+        $this->id = $id;
+        $this->subject = $subject;
+        $this->tutorName = $tutor;
+        $this->progress = $current;
+        $this->totalSessions = $total;
+        $this->nextSchedule = $schedule;
+        $this->status = $status; // 'active', 'pending', 'history'
+        $this->color = $color;
+    }
+
+    public function getProgressPercent() {
+        return ($this->progress / $this->totalSessions) * 100;
+    }
+}
+
+// จำลองข้อมูลคลาสเรียนของผู้ใช้
+$allCourses = [
+    new StudentCourse(1, "ฟิสิกส์", "Tutor Name", 3, 8, "พรุ่งนี้ 15:00", "active", "#FF9A9E"),
+    new StudentCourse(2, "แคลคูลัส", "Tutor Name", 1, 6, "ศุกร์ 17:00", "active", "#FFB0B0"),
+    new StudentCourse(3, "แคลคูลัส", "Tutor Name", 0, 0, "วันพฤหัส 16:00", "pending", "#FFB0B0"),
+    new StudentCourse(4, "ฟิสิกส์", "Tutor Name", 8, 8, "เสร็จ 15 ก.พ. 2569", "history", "#FF9A9E")
 ];
 
-// 2. รับค่า Matching จากหน้า Preference
-$userPref = isset($_POST['user_features']) ? array_filter($_POST['user_features']) : [];
+// รับค่า Tab ที่เลือก (Default เป็น active)
+$currentTab = $_GET['tab'] ?? 'active';
 
-// 3. ใช้ OOP ในการคำนวณและเรียงลำดับ (Match Engine)
-$engine = new MatchEngine($tutorsRaw);
-$tutorList = $engine->getMatchedTutors($userPref);
+// กรองข้อมูลตาม Tab
+$filteredCourses = array_filter($allCourses, function($c) use ($currentTab) {
+    return $c->status === $currentTab;
+});
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +45,7 @@ $tutorList = $engine->getMatchedTutors($userPref);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor Matching - หน้าหลัก</title>
+    <title>คลาสของฉัน</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -63,159 +54,126 @@ $tutorList = $engine->getMatchedTutors($userPref);
             --soft-red: #FF6B6B;
             --bg-gray: #F9F9F9;
         }
-
         * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
-        body { margin: 0; background-color: #333; display: flex; justify-content: center; min-height: 100vh; }
+        body { margin: 0; background-color: #333; display: flex; justify-content: center; }
 
         .mobile-container {
             width: 100%; max-width: 414px; min-height: 100vh;
-            background-color: var(--bg-gray); position: relative;
-            display: flex; flex-direction: column; padding-bottom: 80px;
-            overflow: hidden;
+            background-color: var(--bg-gray); position: relative; padding-bottom: 80px;
         }
 
-        /* --- Header สีส้มโค้งมน (ปรับตามหน้าอื่น) --- */
+        /* Header */
         .header-orange {
-            background: var(--orange-grad);
-            height: 180px;
-            border-radius: 0 0 50px 50px; /* โค้งมนลงมาบังส่วนขาว */
-            padding: 35px 25px;
-            color: white;
+            background: var(--orange-grad); height: 160px;
+            padding: 40px 25px; color: white; border-radius: 0 0 0 0;
+        }
+        .header-title { font-size: 24px; font-weight: 500; margin-top: 20px; }
+
+        /* Tabs Navigation */
+        .tabs-nav {
+            display: flex; background: white; border-radius: 25px 25px 0 0;
+            margin-top: -30px; padding: 15px 5px; justify-content: space-around;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.02);
+        }
+        .tab-item {
+            font-size: 14px; color: #aaa; text-decoration: none; padding-bottom: 5px;
+            border-bottom: 2px solid transparent; transition: 0.3s;
+        }
+        .tab-item.active { color: var(--soft-red); border-bottom-color: var(--soft-red); font-weight: 600; }
+
+        /* Course Cards */
+        .content { padding: 20px; }
+        .course-card {
+            background: white; border-radius: 20px; padding: 18px;
+            margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             position: relative;
-            z-index: 10;
         }
-        .header-title { font-size: 24px; font-weight: 500; margin-bottom: 12px; }
-
-        /* ส่วนค้นหาใน Header */
-        .search-wrap { position: relative; }
-        .search-wrap i {
-            position: absolute; left: 15px; top: 15px;
-            color: rgba(255, 255, 255, 0.8); font-size: 18px;
+        .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .subject-badge {
+            padding: 3px 12px; border-radius: 12px; color: white; font-size: 11px;
         }
-        .search-input {
-            width: 100%; padding: 15px 15px 15px 45px;
-            border-radius: 12px; border: none;
-            background-color: rgba(255, 255, 255, 0.35); /* ขาวใสตาม UI */
-            color: white; font-size: 14px; outline: none;
+        .status-text { font-size: 11px; color: #2ECC71; font-weight: 500; }
+
+        .tutor-name { font-size: 16px; font-weight: 600; color: #444; margin: 0; }
+        .schedule-info { font-size: 11px; color: #999; margin: 5px 0 15px; }
+
+        /* Progress Bar */
+        .progress-container { background: #F0F0F0; height: 6px; border-radius: 10px; margin-bottom: 15px; overflow: hidden; }
+        .progress-fill { background: var(--soft-red); height: 100%; border-radius: 10px; transition: 0.5s; }
+
+        /* Buttons */
+        .btn-action {
+            width: 100%; padding: 10px; border-radius: 12px; font-size: 14px; font-weight: 500;
+            cursor: pointer; text-align: center; text-decoration: none; display: block;
         }
-        .search-input::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .btn-chat { border: 1.5px solid var(--soft-red); color: var(--soft-red); background: white; }
+        .btn-wait { border: 1.5px solid #DDD; color: #BBB; background: white; cursor: default; }
 
-        /* --- เนื้อหาหลัก --- */
-        .content { flex: 1; padding: 25px 20px; }
-
-        /* แถบวิชา */
-        .subject-filter {
-            display: flex; gap: 10px; margin-bottom: 20px;
-            overflow-x: auto; padding-bottom: 5px;
+        /* Bottom Nav */
+        .nav-bar {
+            position: fixed; bottom: 0; width: 100%; max-width: 414px;
+            background: white; display: flex; justify-content: space-around;
+            padding: 15px 0; border-radius: 25px 25px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
         }
-        .subject-tag {
-            padding: 6px 15px; border-radius: 15px;
-            background-color: white; color: #888;
-            font-size: 11px; border: 1px solid #eee; white-space: nowrap;
-        }
-        .subject-tag.active { background-color: var(--soft-red); color: white; border-color: var(--soft-red); }
-
-        .info-text { font-size: 12px; color: #999; margin-bottom: 15px; }
-
-        /* --- การ์ดติวเตอร์ (UI เป๊ะตามรูป) --- */
-        .tutor-card {
-            background: white; border-radius: 20px; padding: 15px;
-            display: flex; align-items: center; gap: 15px;
-            margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            border: 1px solid #f0f0f0; transition: 0.2s;
-        }
-
-        /* รูปโปรไฟล์สีส้มแดง */
-        .profile-img {
-            width: 70px; height: 70px;
-            background-color: #FF6B6B; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 35px;
-        }
-
-        .tutor-detail { flex: 1; }
-        .tutor-name { font-weight: 600; font-size: 16px; color: #333; margin-bottom: 2px; }
-        .rating-box { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #555; }
-        .rating-box i { color: #555; font-size: 10px; }
-
-        .tag-row { display: flex; gap: 6px; margin-top: 8px; }
-        .tag-badge {
-            font-size: 10px; padding: 3px 10px; border-radius: 8px;
-            background-color: #FFF0F0; color: #FF6B6B;
-        }
-
-        /* วงกลม Match Score */
-        .match-badge { text-align: center; min-width: 65px; }
-        .score-circle {
-            width: 58px; height: 58px; background-color: #FF6B6B;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: bold; font-size: 14px;
-            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
-        }
-        .score-label { font-size: 9px; color: #bbb; margin-top: 4px; text-transform: uppercase; }
-
-        /* --- Bottom Nav --- */
-        .bottom-nav {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
-            background: white; border-top: 1px solid #eee;
-            display: flex; justify-content: space-around; align-items: center;
-        }
-        .nav-item { color: #ccc; font-size: 24px; text-decoration: none; }
-        .nav-item.active { color: #FFB0B0; }
+        .nav-link { color: #ddd; font-size: 22px; text-decoration: none; }
+        .nav-link.active { color: var(--soft-red); }
     </style>
 </head>
 <body>
 
 <div class="mobile-container">
     <div class="header-orange">
-        <div class="header-title">ค้นหาติวเตอร์</div>
-        <div class="search-wrap">
-            <i class="fa-solid fa-search"></i>
-            <input type="text" class="search-input" placeholder="ค้นหาวิชา หรือชื่อติวเตอร์......">
-        </div>
+        <div class="header-title">คลาสของฉัน</div>
     </div>
 
+    <nav class="tabs-nav">
+        <a href="?tab=active" class="tab-item <?= $currentTab == 'active' ? 'active' : '' ?>">กำลังเรียน</a>
+        <a href="?tab=pending" class="tab-item <?= $currentTab == 'pending' ? 'active' : '' ?>">รอยืนยัน</a>
+        <a href="?tab=history" class="tab-item <?= $currentTab == 'history' ? 'active' : '' ?>">ประวัติ</a>
+    </nav>
+
     <div class="content">
-        <div class="subject-filter">
-            <div class="subject-tag active">ทั้งหมด</div>
-            <div class="subject-tag">คณิตศาสตร์</div>
-            <div class="subject-tag">ฟิสิกส์</div>
-            <div class="subject-tag">เคมี</div>
-            <div class="subject-tag">อังกฤษ</div>
-        </div>
+        <?php if (empty($filteredCourses)): ?>
+            <div style="text-align:center; color:#ccc; margin-top:50px;">ไม่มีข้อมูลคลาสในส่วนนี้</div>
+        <?php endif; ?>
 
-        <div class="info-text">พบ <?= count($tutorList) ?> ติวเตอร์ - เรียงตาม Match score</div>
+        <?php foreach ($filteredCourses as $course): ?>
+        <div class="course-card">
+            <div class="card-top">
+                <span class="subject-badge" style="background: <?= $course->color ?>"><?= $course->subject ?></span>
+                <span class="status-text" style="color: <?= $course->status == 'pending' ? '#FFA500' : ($course->status == 'history' ? '#2ECC71' : '#2ECC71') ?>">
+                    <?= $course->status == 'pending' ? 'รอยืนยัน' : ($course->status == 'history' ? 'เสร็จสิ้น' : 'กำลังเรียน') ?>
+                </span>
+            </div>
 
-        <?php foreach($tutorList as $t): ?>
-        <div class="tutor-card" onclick="location.href='profile.php?id=<?= $t['id'] ?>'">
-            <div class="profile-img"><i class="fa-solid fa-user"></i></div>
+            <h3 class="tutor-name"><?= $course->tutorName ?></h3>
             
-            <div class="tutor-detail">
-                <div class="tutor-name"><?= $t['name'] ?></div>
-                <div class="rating-box">
-                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                    <span><?= $t['rating'] ?></span>
-                    <span style="color:#aaa; margin-left:5px;"><?= $t['subjects'] ?></span>
+            <?php if($course->status == 'active'): ?>
+                <p class="schedule-info">เรียนแล้ว <?= $course->progress ?>/<?= $course->totalSessions ?> ครั้ง - ครั้งต่อไป: <?= $course->nextSchedule ?></p>
+                <div class="progress-container">
+                    <div class="progress-fill" style="width: <?= $course->getProgressPercent() ?>%"></div>
                 </div>
-                <div class="tag-row">
-                    <span class="tag-badge"><?= $t['type'] ?></span>
-                    <span class="tag-badge" style="background:#FFE4E4; font-weight:600;"><?= $t['price'] ?>บาท/ชม.</span>
-                </div>
-            </div>
+                <a href="#" class="btn-action btn-chat">แชทสนทนา</a>
+            
+            <?php elseif($course->status == 'pending'): ?>
+                <p class="schedule-info">ลงคำขอ: 24 มี.ค. | เวลาเรียน: <?= $course->nextSchedule ?></p>
+                <div class="btn-action btn-wait">รอยืนยัน</div>
 
-            <div class="match-badge">
-                <div class="score-circle"><?= $t['score'] ?>%</div>
-                <div class="score-label">Match</div>
-            </div>
+            <?php elseif($course->status == 'history'): ?>
+                <p class="schedule-info">เรียนครบ <?= $course->progress ?>/<?= $course->totalSessions ?> ครั้ง - <?= $course->nextSchedule ?></p>
+                <div class="progress-container">
+                    <div class="progress-fill" style="width: 100%; background: #FF6B6B; box-shadow: 0 2px 5px rgba(255,107,107,0.4)"></div>
+                </div>
+            <?php endif; ?>
         </div>
         <?php endforeach; ?>
     </div>
 
-    <div class="bottom-nav">
-        <a href="index.php" class="nav-item"><i class="fa-solid fa-home"></i></a>
-        <a href="preference.php" class="nav-item active"><i class="fa-solid fa-search"></i></a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-book-open"></i></a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-user"></i></a>
+    <div class="nav-bar">
+        <a href="index.php" class="nav-link"><i class="fa-solid fa-house"></i></a>
+        <a href="preference.php" class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="my_classes.php" class="nav-link active"><i class="fa-solid fa-book-open"></i></a>
+        <a href="student_profile.php" class="nav-link"><i class="fa-solid fa-user"></i></a>
     </div>
 </div>
 
