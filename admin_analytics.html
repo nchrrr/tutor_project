@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>กิจกรรม - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --orange-grad: linear-gradient(180deg, #FF6B6B 0%, #FEB47B 100%); }
+        * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+        body { margin: 0; background: #333; display: flex; justify-content: center; min-height: 100vh; }
+        .mobile-container { width: 100%; max-width: 414px; min-height: 100vh; background: #F9F9F9; display: flex; flex-direction: column; padding-bottom: 80px; }
+        .header-orange { background: var(--orange-grad); height: 140px; border-radius: 0 0 45px 45px; padding: 35px 25px; color: white; z-index: 2; position: relative; }
+        .content { flex: 1; padding: 20px; }
+        .activity-card { background: white; border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 14px; box-shadow: 0 3px 10px rgba(0,0,0,0.03); }
+        .act-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .act-msg { font-size: 13px; color: #444; font-weight: 500; }
+        .act-time { font-size: 11px; color: #bbb; }
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 414px; height: 70px; background: white; border-top: 1px solid #eee; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .bottom-nav a { color: #ccc; font-size: 22px; text-decoration: none; padding: 10px; }
+        .bottom-nav a.active { color: #FFB0B0; }
+    </style>
+</head>
+<body>
+<div class="mobile-container">
+    <div class="header-orange"><div style="font-size:22px; font-weight:500;">กิจกรรม</div></div>
+    <div class="content" id="content"></div>
+    <div class="bottom-nav">
+        <a href="admin_dashboard.html"><i class="fa-solid fa-home"></i></a>
+        <a href="admin_users.html"><i class="fa-solid fa-users"></i></a>
+        <a href="admin_analytics.html"><i class="fa-solid fa-chart-bar"></i></a>
+        <a href="admin_activity.html" class="active"><i class="fa-solid fa-bell"></i></a>
+    </div>
+</div>
+<script>
+    /* ===== OOP: Class ActivityLog (Encapsulation + Polymorphism-like icon switching) ===== */
+    class ActivityLog {
+        constructor(type, message, timeAgo) {
+            this.type = type; this.message = message; this.timeAgo = timeAgo;
+            var map = {
+                new_user: {icon:'fa-user-plus',color:'#FF6B6B'}, verify: {icon:'fa-circle-check',color:'#2ECC71'},
+                booking: {icon:'fa-calendar-check',color:'#3498DB'}, alert: {icon:'fa-star',color:'#F39C12'},
+                update: {icon:'fa-images',color:'#9B59B6'}, payment: {icon:'fa-money-bill',color:'#2ECC71'},
+                cancel: {icon:'fa-xmark',color:'#E74C3C'}
+            };
+            var m = map[type] || {icon:'fa-info-circle',color:'#999'};
+            this.icon = m.icon; this.color = m.color;
+        }
+    }
+
+    var activities = [
+        new ActivityLog('new_user','นักเรียนใหม่ สมัครสมาชิก','5 นาทีก่อน'),
+        new ActivityLog('verify','ติวเตอร์ ... ได้รับการอนุมัติ','30 นาทีก่อน'),
+        new ActivityLog('booking','มีการจอง 3 ครั้ง ใหม่','50 นาทีก่อน'),
+        new ActivityLog('alert','ติวเตอร์เปิด ...','1 ชม. ก่อน'),
+        new ActivityLog('update','อัพเดทโปรไฟล์','2 ชม. ก่อน'),
+        new ActivityLog('payment','การชำระเงิน 1,200 สำเร็จ','3 ชม. ก่อน'),
+        new ActivityLog('cancel','... แคนเซิล','4 ชม. ก่อน'),
+    ];
+
+    document.getElementById('content').innerHTML = activities.map(function(a){
+        return '<div class="activity-card"><div class="act-icon" style="background:'+a.color+'15; color:'+a.color+'"><i class="fa-solid '+a.icon+'"></i></div><div style="flex:1"><div class="act-msg">'+a.message+'</div><div class="act-time">'+a.timeAgo+'</div></div></div>';
+    }).join('');
+</script>
+</body>
+</html>
