@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำขอรอยืนยัน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --orange-grad: linear-gradient(180deg, #FF6B6B 0%, #FEB47B 100%);
+            --soft-red: #FF6B6B;
+            --bg-light: #F2F2F2;
+            --status-green: #E5FFF0;
+            --text-green: #2ECC71;
+        }
+
+        * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+        body { margin: 0; background-color: #333; display: flex; justify-content: center; }
+
+        .mobile-container {
+            width: 100%; max-width: 414px; min-height: 100vh;
+            background-color: var(--bg-light); position: relative; padding-bottom: 90px;
+        }
+
+        /* Header ส่วนหัวโค้งมน */
+        .header-bg {
+            background: var(--orange-grad);
+            height: 160px;
+            border-radius: 0 0 40px 40px;
+            display: flex; align-items: center; padding: 0 30px;
+            position: relative; z-index: 10;
+        }
+        .header-title { color: white; font-size: 24px; font-weight: 500; margin-top: 10px; }
+
+        /* Tabs Section */
+        .tabs-section {
+            background: white; border-radius: 30px 30px 0 0;
+            margin-top: -35px; padding: 45px 10px 10px;
+            position: relative; z-index: 5;
+        }
+        .tab-nav { display: flex; justify-content: space-around; margin-bottom: 15px; }
+        .tab-item { color: #888; text-decoration: none; font-size: 14px; padding-bottom: 5px; }
+        .tab-item.active { color: var(--soft-red); border-bottom: 2px solid var(--soft-red); font-weight: 600; }
+
+        .filter-scroll {
+            display: flex; overflow-x: auto; gap: 8px; padding: 5px 15px;
+            scrollbar-width: none;
+        }
+        .filter-scroll::-webkit-scrollbar { display: none; }
+        
+        .filter-btn {
+            padding: 5px 15px; border-radius: 18px; border: 1px solid #EEE;
+            background: white; color: #AAA; font-size: 11px; white-space: nowrap;
+        }
+        .filter-btn.active { background: var(--soft-red); color: white; border-color: var(--soft-red); }
+
+        /* Student Pending Cards */
+        .content { padding: 10px 20px; }
+        .pending-card {
+            background: white; border-radius: 20px; 
+            padding: 15px; margin-bottom: 15px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        .card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .student-img {
+            width: 55px; height: 55px; background: var(--soft-red);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .student-img i { color: white; font-size: 30px; }
+
+        .student-info h3 { font-size: 16px; margin: 0; color: #444; }
+        .subject-tag {
+            background: #FFE5E5; color: var(--soft-red);
+            font-size: 10px; padding: 2px 10px; border-radius: 10px;
+            display: inline-block; margin-top: 4px;
+        }
+
+        .status-badge {
+            position: absolute; right: 15px; top: 15px;
+            background: var(--status-green); color: var(--text-green);
+            font-size: 10px; padding: 4px 12px; border-radius: 10px;
+        }
+
+        .time-info { font-size: 10px; color: #BBB; margin: 10px 0; }
+
+        /* Button Grid */
+        .action-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 5px; margin-top: 10px;
+        }
+        .btn-outline {
+            border: 1px solid var(--soft-red); color: var(--soft-red);
+            background: white; border-radius: 15px; padding: 5px 0;
+            font-size: 10px; text-align: center; text-decoration: none;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn-outline:active { background: var(--soft-red); color: white; }
+
+        /* Nav Bar */
+        .nav-bar {
+            position: fixed; bottom: 0; width: 100%; max-width: 414px;
+            background: white; display: flex; justify-content: space-around;
+            padding: 15px 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.02);
+            border-radius: 25px 25px 0 0;
+        }
+        .nav-item { color: #FFCDCD; font-size: 24px; text-decoration: none; }
+        .nav-item.active { color: var(--soft-red); }
+    </style>
+</head>
+<body>
+
+<div class="mobile-container">
+    <div class="header-bg">
+        <div class="header-title">นักเรียนของฉัน</div>
+    </div>
+
+    <div class="tabs-section">
+        <div class="tab-nav">
+            <a href="tutor_students.php" class="tab-item">กำลังสอน</a>
+            <a href="#" class="tab-item active">รอยืนยัน</a>
+            <a href="#" class="tab-item">ประวัติ</a>
+        </div>
+        <div class="filter-scroll">
+            <button class="filter-btn active">ทั้งหมด</button>
+            <button class="filter-btn">คณิตศาสตร์</button>
+            <button class="filter-btn">ฟิสิกส์</button>
+            <button class="filter-btn">เคมี</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="pending-card">
+            <span class="status-badge">รอยืนยัน</span>
+            <div class="card-top">
+                <div class="student-img"><i class="fa-solid fa-user"></i></div>
+                <div class="student-info">
+                    <h3>User Name</h3>
+                    <span class="subject-tag">แคลคูลัส</span>
+                </div>
+            </div>
+            <div class="time-info">ส่งคำขอ: 24 มี.ค. | เวลาเรียน : วันพฤหัส 16:00</div>
+            
+            <div class="action-grid">
+                <div class="btn-outline">อนุมัติ</div>
+                <div class="btn-outline">ปฏิเสธ</div>
+                <div class="btn-outline">ดูประวัติ</div>
+                <div class="btn-outline">รายละเอียด</div>
+            </div>
+        </div>
+
+        <div class="pending-card">
+            <span class="status-badge">รอยืนยัน</span>
+            <div class="card-top">
+                <div class="student-img"><i class="fa-solid fa-user"></i></div>
+                <div class="student-info">
+                    <h3>User Name</h3>
+                    <span class="subject-tag">แคลคูลัส</span>
+                </div>
+            </div>
+            <div class="time-info">ส่งคำขอ: 24 มี.ค. | เวลาเรียน : วันพฤหัส 16:00</div>
+            
+            <div class="action-grid">
+                <div class="btn-outline">อนุมัติ</div>
+                <div class="btn-outline">ปฏิเสธ</div>
+                <div class="btn-outline">ดูประวัติ</div>
+                <div class="btn-outline">รายละเอียด</div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="index.php" class="nav-item"><i class="fa-solid fa-house"></i></a>
+        <a href="tutor_students.php" class="nav-item active"><i class="fa-solid fa-user-group"></i></a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-chart-simple"></i></a>
+        <a href="tutor_profile.php" class="nav-item"><i class="fa-solid fa-user"></i></a>
+    </nav>
+</div>
+
+</body>
+</html>

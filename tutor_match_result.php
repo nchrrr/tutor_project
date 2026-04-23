@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Analysis - Tutor View</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --orange-grad: linear-gradient(180deg, #FF6B6B 0%, #FEB47B 100%);
+            --soft-red: #FF6B6B;
+            --bg-light: #F2F2F2;
+        }
+
+        * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+        body { margin: 0; background-color: #333; display: flex; justify-content: center; }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 414px;
+            min-height: 100vh;
+            background-color: var(--bg-light);
+            position: relative;
+            padding-bottom: 90px;
+        }
+
+        /* --- Header: ส่วนหัวโค้งมนแบบเดียวกับหน้าอื่นๆ --- */
+        .header-bg {
+            background: var(--orange-grad);
+            height: 180px; /* ปรับความสูงให้พอดีกับหน้าอื่น */
+            border-radius: 0 0 40px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            z-index: 10; /* ให้อยู่เหนือส่วน Content */
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 40px;
+            left: 25px;
+            font-size: 20px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .profile-img i { font-size: 40px; color: #DDD; }
+
+        .tutor-name { font-size: 18px; font-weight: 500; margin: 0; }
+
+        /* --- Content Section: ปรับ Padding เพื่อไม่ให้บัง Header --- */
+        .content-area {
+            background: white;
+            border-radius: 30px 30px 0 0;
+            margin-top: -35px; /* เชื่อมกับ Header */
+            padding: 45px 25px 20px; /* Padding-top 45px เพื่อโชว์ความมนของสีส้ม */
+            position: relative;
+            z-index: 5;
+            min-height: calc(100vh - 145px);
+        }
+
+        .section-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* --- Match Score Card --- */
+        .match-card {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--soft-red);
+            margin-bottom: 25px;
+        }
+
+        .match-circle {
+            width: 70px;
+            height: 70px;
+            background: var(--soft-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .score-tags {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .tag {
+            background: #FFE5E5;
+            color: var(--soft-red);
+            font-size: 10px;
+            padding: 4px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* --- Detail Rows --- */
+        .details-card {
+            background: #FDFDFD;
+            border-radius: 20px;
+            padding: 5px 15px;
+            border: 1px solid #F0F0F0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #F5F5F5;
+            font-size: 13px;
+        }
+        .detail-row:last-child { border-bottom: none; }
+
+        .label { color: #AAA; }
+        .value { color: #444; font-weight: 500; }
+
+        /* --- Bottom Nav --- */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            max-width: 414px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-radius: 25px 25px 0 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+            z-index: 100;
+        }
+        .nav-item { color: #FFCDCD; font-size: 24px; text-decoration: none; }
+        .nav-item.active { color: var(--soft-red); }
+    </style>
+</head>
+<body>
+
+<div class="mobile-container">
+    <header class="header-bg">
+        <a href="tutor_pending.php" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <div class="profile-img"><i class="fa-solid fa-user"></i></div>
+        <h2 class="tutor-name">Tutor User Name</h2>
+    </header>
+
+    <div class="content-area">
+        <span class="section-label">ผลการวิเคราะห์ความเหมาะสม</span>
+
+        <div class="match-card">
+            <div class="match-circle">93%</div>
+            <div class="score-tags">
+                <div class="tag">วิชา 30%</div>
+                <div class="tag">ระดับชั้น 20%</div>
+                <div class="tag">สไตล์การสอน 20%</div>
+                <div class="tag">เวลาตรงกัน 20%</div>
+                <div class="tag">เรทราคา 10%</div>
+            </div>
+        </div>
+
+        <span class="section-label" style="font-size: 14px;">ความต้องการของนักเรียน</span>
+        <div class="details-card">
+            <div class="detail-row">
+                <span class="label">วิชา</span>
+                <span class="value">ฟิสิกส์, เคมี</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">รูปแบบการเรียน</span>
+                <span class="value">ออนไลน์</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">งบประมาณ</span>
+                <span class="value">200฿/ชม.</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">เวลาที่สะดวก</span>
+                <span class="value">จันทร์ 20:00</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">ระดับชั้น</span>
+                <span class="value">มัธยมปลาย</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="nav-bar">
+        <a href="index.php" class="nav-item"><i class="fa-solid fa-house"></i></a>
+        <a href="tutor_students.php" class="nav-item active"><i class="fa-solid fa-user-group"></i></a>
+        <a href="tutor_schedule.php" class="nav-item"><i class="fa-solid fa-chart-simple"></i></a>
+        <a href="tutor_profile.php" class="nav-item"><i class="fa-solid fa-user"></i></a>
+    </nav>
+</div>
+
+</body>
+</html>
