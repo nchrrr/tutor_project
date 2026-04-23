@@ -95,6 +95,30 @@
         }
         .nav-item { color: #FFCDCD; font-size: 24px; text-decoration: none; }
         .nav-item.active { color: var(--soft-red); }
+
+        .nav-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        background: white;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.nav-item {
+    color: #CCC;
+    font-size: 24px;
+    text-decoration: none;
+}
+
+.nav-item.active {
+    color: #FF7B54; 
+}
     </style>
 </head>
 <body>
@@ -102,6 +126,7 @@
 <div class="mobile-container">
     <div class="header-bg">
         <div class="header-title">Analytics</div>
+        
     </div>
 
     <div class="content">
@@ -171,6 +196,7 @@
     </div>
 
     <nav class="nav-bar">
+    <a href="tutor_schedule.html" class="nav-item"><i class="fa-solid fa-house"></i></a>
     <a href="tutor_students.html" class="nav-item"><i class="fa-solid fa-user-group"></i></a>
     <a href="tutor_analytics.html" class="nav-item active"><i class="fa-solid fa-chart-simple"></i></a>
     <a href="tutor_profile.html" class="nav-item"><i class="fa-solid fa-user"></i></a>
