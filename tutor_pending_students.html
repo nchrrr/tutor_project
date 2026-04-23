@@ -119,9 +119,9 @@
 
     <div class="tabs-section">
         <div class="tab-nav">
-            <a href="tutor_students.php" class="tab-item">กำลังสอน</a>
-            <a href="#" class="tab-item active">รอยืนยัน</a>
-            <a href="#" class="tab-item">ประวัติ</a>
+            <a href="tutor_students.html" class="tab-item">กำลังเรียน</a>
+            <a href="tutor_pending_students.html" class="tab-item">รอยืนยัน</a>
+            <a href="tutor_history.html" class="tab-item">ประวัติ</a>
         </div>
         <div class="filter-scroll">
             <button class="filter-btn active">ทั้งหมด</button>
@@ -146,37 +146,17 @@
             <div class="action-grid">
                 <div class="btn-outline">อนุมัติ</div>
                 <div class="btn-outline">ปฏิเสธ</div>
-                <div class="btn-outline">ดูประวัติ</div>
-                <div class="btn-outline">รายละเอียด</div>
+                <a href="tutor_match_result.php" class="btn-outline">ดูประวัติ</a>
+                <a href="tutor_match_result.php" class="btn-outline">รายละเอียด</a>
             </div>
         </div>
-
-        <div class="pending-card">
-            <span class="status-badge">รอยืนยัน</span>
-            <div class="card-top">
-                <div class="student-img"><i class="fa-solid fa-user"></i></div>
-                <div class="student-info">
-                    <h3>User Name</h3>
-                    <span class="subject-tag">แคลคูลัส</span>
-                </div>
-            </div>
-            <div class="time-info">ส่งคำขอ: 24 มี.ค. | เวลาเรียน : วันพฤหัส 16:00</div>
-            
-            <div class="action-grid">
-                <div class="btn-outline">อนุมัติ</div>
-                <div class="btn-outline">ปฏิเสธ</div>
-                <div class="btn-outline">ดูประวัติ</div>
-                <div class="btn-outline">รายละเอียด</div>
-            </div>
-        </div>
-    </div>
-
+        
     <nav class="nav-bar">
-        <a href="index.php" class="nav-item"><i class="fa-solid fa-house"></i></a>
-        <a href="tutor_students.php" class="nav-item active"><i class="fa-solid fa-user-group"></i></a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-chart-simple"></i></a>
-        <a href="tutor_profile.php" class="nav-item"><i class="fa-solid fa-user"></i></a>
-    </nav>
+    
+    <a href="tutor_students.html" class="nav-item"><i class="fa-solid fa-user-group"></i></a>
+    <a href="tutor_analytics.html" class="nav-item active"><i class="fa-solid fa-chart-simple"></i></a>
+    <a href="tutor_profile.html" class="nav-item"><i class="fa-solid fa-user"></i></a>
+</nav>
 </div>
 
 </body>
